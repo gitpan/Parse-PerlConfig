@@ -21,7 +21,7 @@ use vars (
 
 @EXPORT_OK = qw(parse);
 
-$VERSION = '0.03';
+$VERSION = '0.04';
 
 
 my %thing_str2key = (
@@ -232,12 +232,6 @@ sub parse {
             Symbols         =>  \%custom_symbols,
             Hash            =>  \%parsed_symbols,
         );
-
-
-        {
-            no strict 'refs';
-            undef %{"$namespace\::"};
-        }
     }
 
 

@@ -15,6 +15,23 @@ DESCRIPTION
     symbols.
 
 
+A NOTE ON THE VERSION
+
+    Currently, Parse::PerlConfig is at a version below 1.0.  This is mostly
+    due to the fact that I have not received a lot of feedback regarding the
+    module, so I can't determine if it's useful as it is or if there are
+    major problems with it.  The version is not meant to indicate the code's
+    stability; I have been using it in various production projects and have
+    yet to trip over a bug.  The version is also not meant to indicate the
+    interface's immaturity; although it is a fairly young module, I
+    personally rely on the interface staying as it is, so most changes will
+    be backwards compatible (I say most because 0.03 is ever-so-slightly not
+    backwards compatible; see NEWS).
+
+    So, Parse::PerlConfig is stable in both code (as far as I can tell) and
+    interface.
+
+
 AUTHOR
 
     Michael Fowler <michael@shoebox.net>

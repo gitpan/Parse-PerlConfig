@@ -1,9 +1,22 @@
-0.03    Wed Jul 19 14:24:47 AKDT 2000
+0.04    Sat Sep 16 02:07:53 AKDT 2000
+
+    PerlConfig.pm
+        - removed the undef of the entire namespace, which was causing
+          some serious problems with caller() and closures (see
+          http://shoebox.net/bugs/perl/delete-package.pl for an example
+          script)
+
+
+0.03    Fri Jul 21 15:42:57 AKDT 2000
+
+    README
+        - added a note regarding the < 1.0 version number
+
     test suite
-        - removed t/_*.t due to their internal nature; internals have
+        - removed t/_*.t tests due to their internal nature; internals have
           changed a bit (especially _do_file()), and it's difficult to keep
           the test suite up to date; it's also not entirely correct to be
-          testing internal features; it's much better to test the external,
+          testing internal features, it's much better to test the external,
           user-visible interface as much as possible
 
     t/parse/lex-test.conf
@@ -26,7 +39,7 @@
         - removed $lexical_filename and $lexical_namespace
         - moved $success to the top
 
-    t/pares/testconfig.pm
+    t/parse/testconfig.pm
         - added lex-test.conf to %test_conf                  
         - removed Filename and Namespace keys from
           $test_conf{'test.conf'}{Lexicals}
