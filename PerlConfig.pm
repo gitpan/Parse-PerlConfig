@@ -21,7 +21,7 @@ use vars (
 
 @EXPORT_OK = qw(parse);
 
-$VERSION = '0.04';
+$VERSION = '0.05';
 
 
 my %thing_str2key = (
@@ -282,8 +282,6 @@ sub _parse_symbols {
                 if (defined ${ *$glob{SCALAR} }) {
                     $value = ${ *$glob{SCALAR} };
                     last;
-                } else {
-                    next;
                 }
 
             } elsif (defined *$glob{$thing}) {
@@ -293,7 +291,7 @@ sub _parse_symbols {
         }
 
 
-        $$parsed_symbols{$symbol} = defined($value) ? $value : undef;
+        $$parsed_symbols{$symbol} = $value if defined($value);
 
 
         # In order to prevent various warnings, and the symbols from still
@@ -973,11 +971,13 @@ characters.
 
 =head1 BUGS
 
-Currently parse() has to workaround the fact that there is B<always> a
-scalar slot filled in a glob, regardless of whether or not a scalar has been
-defined (the justification being for each symbol you get a scalar for free,
-under the assumption that scalars are heavily used).  There is talk of
-removing this feature.  This shouldn't break parse(), but it might.
+Due to the fact that the scalar slot in a glob is always filled it is not
+possible to distinguish from a scalar that was never defined (e.g. C<@foo>
+was, but C<$foo> was never mentioned) from one that is simply undef. 
+Because of this, for example, if you have a thing order of C<$@> and code
+along the lines of C<$foo = undef; @foo = ();> the 'foo' key of the hash
+will be an array reference, despite there being a scalar and C<$> coming
+first in the thing order.
 
 
 =head1 TODO

@@ -1,5 +1,5 @@
 # parse() Thing_Order argument test
-# $Id: things.t,v 1.3 2000/07/19 23:57:03 mfowler Exp $
+# $Id: things.t,v 1.4 2000/10/19 08:04:33 mfowler Exp $
 
 # Verifies parse() handles its Thing_Order argument as advertised.
 
@@ -20,8 +20,8 @@ use vars qw(
 $tconf = parse::testconfig->new('test.conf');
 
 
-@scalars     = $tconf->symbols(Type => 'SCALAR');
-@not_scalars = $tconf->symbols(NotType => 'SCALAR');
+@scalars     = $tconf->symbols(Type     => 'SCALAR');
+@not_scalars = $tconf->symbols(NotType  => 'SCALAR');
 
 @hashes_not_scalars     = $tconf->symbols(Type => 'HASH', NotType => 'SCALAR');
 @not_hashes_not_scalars = $tconf->symbols(NotType => [qw(SCALAR HASH)]);
@@ -31,9 +31,23 @@ $tconf = parse::testconfig->new('test.conf');
 
 
 $tconf->tests(
-    @scalars * 2    +       @hashes_not_scalars     +       @io     +
-    @not_scalars    +       @not_hashes_not_scalars +       @not_io +
-    $tconf->verify_parsed() * 3
+    # Scalars only test.
+    $tconf->verify_parsed(Symbols => \@scalars) +
+    @scalars                        +   # verify_symbols_are_reftype()
+    @not_scalars                    +   # verify_symbols_are_nonexistent()
+
+    # Scalars and hashes test.
+    $tconf->verify_parsed(Symbols => [ @scalars, @hashes_not_scalars ]) +
+    @scalars                        +   # verify_symbols_are_reftype()
+    @hashes_not_scalars             +   # verify_symbols_are_reftype()
+    @not_hashes_not_scalars         +   # verify_symbols_are_nonexistent()
+
+    # IO handles test.
+    $tconf->verify_parsed(Symbols => \@io) +
+    @io                             +   # manual check for isa IO::Handle
+    @not_io                         +   # verify_symbols_are_nonexistent()
+
+    0 # placeholder
 );
 
 
@@ -45,11 +59,13 @@ $tconf->tests(
         Thing_Order     =>      '$'
     );
 
+    $tconf->verify_parsed(
+        Parsed  =>  $parsed,
+        Symbols =>  \@scalars,
+    );
 
-    $tconf->verify_parsed($parsed);
-
-    verify_symbols_are_reftype  ($tconf, $parsed, "", \@scalars);
-    verify_symbols_are_undefined($tconf, $parsed,     \@not_scalars);
+    verify_symbols_are_reftype    ($tconf, $parsed, "", \@scalars);
+    verify_symbols_are_nonexistent($tconf, $parsed,     \@not_scalars);
 }
 
 
@@ -62,7 +78,10 @@ $tconf->tests(
     );
 
 
-    $tconf->verify_parsed($parsed);
+    $tconf->verify_parsed(
+        Parsed  =>  $parsed,
+        Symbols =>  [ @scalars, @hashes_not_scalars ],
+    );
 
     verify_symbols_are_reftype(
         $tconf, $parsed, "",     \@scalars
@@ -71,7 +90,7 @@ $tconf->tests(
         $tconf, $parsed, "HASH", \@hashes_not_scalars
     );
 
-    verify_symbols_are_undefined($tconf, $parsed, \@not_hashes_not_scalars);
+    verify_symbols_are_nonexistent($tconf, $parsed, \@not_hashes_not_scalars);
 }
 
 
@@ -84,7 +103,10 @@ $tconf->tests(
     );
 
 
-    $tconf->verify_parsed($parsed);
+    $tconf->verify_parsed(
+        Parsed  =>  $parsed,
+        Symbols =>  \@io,
+    );
 
     # This is where it gets a little hairy.  ref on an IO thing
     # doesn't give 'IO', but usually IO::Handle.  We make our
@@ -97,7 +119,7 @@ $tconf->tests(
     }
 
 
-    verify_symbols_are_undefined($tconf, $parsed, \@not_io);
+    verify_symbols_are_nonexistent($tconf, $parsed, \@not_io);
 }
 
 
@@ -132,13 +154,13 @@ sub verify_symbols_are_reftype {
 
 
 
-sub verify_symbols_are_undefined {
+sub verify_symbols_are_nonexistent {
     my($tconf, $parsed, $symbols) = splice(@_, 0, 3);
 
     foreach my $symbol (@$symbols) {
         $tconf->ok(
-            !defined($$parsed{$symbol}),
-            "symbol $symbol is undefined"
+            !exists($$parsed{$symbol}),
+            "symbol $symbol doesn't exist"
         );
     }
 }

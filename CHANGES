@@ -1,3 +1,25 @@
+0.05    Tue Oct 17 18:25:05 AKDT 2000
+
+    PerlConfig.pm
+        - fixed a bug where if there was no thing order for a given symbol
+          (Thing_Order is empty, or the Symbol key is empty) undef was set
+          for the symbol, rather than omitting the symbol entirely
+        - replaced the paragraph in the BUGS section with a description of
+          what could be viewed as a bug regarding the above change
+
+    t/parse/things.t
+        - renamed verify_symbols_are_undefined() to
+          verify_symbols_are_nonexistent(), and altered it to use exists
+          rather than defined
+        - added Symbols argument to all verify_parsed() calls
+        - fixed the tests call to account for the recent changes in
+          verify_parsed() and its Symbols argument
+
+    t/parse/testconfig.pm
+        - added hash argument handling to verify_parsed()
+
+
+
 0.04    Sat Sep 16 02:07:53 AKDT 2000
 
     PerlConfig.pm

@@ -1,5 +1,5 @@
 # information about the various configuration files
-# $Id: testconfig.pm,v 1.3 2000/07/19 23:56:24 mfowler Exp $
+# $Id: testconfig.pm,v 1.4 2000/10/19 08:05:11 mfowler Exp $
 
 # This module is here to make test script maintenance easier.  Each and
 # every test script needn't know about the details of a configuration file;
@@ -118,9 +118,19 @@ sub file_path { shift->{File_Path} }
 
 # usage: obj->verify_parsed [<parsed config hashref>]
 sub verify_parsed {
-    my($self, $parsed) = (shift, shift);
-
+    my $self    = shift;
     my %symbols = %{$self->{Symbols}};
+
+    my $parsed;
+    if (@_ >= 2) {
+        my %args = @_;
+        $parsed  = $args{'Parsed'} || undef;
+        %symbols = map { $_, $symbols{$_} } @{ $args{'Symbols'} };
+
+    } else {
+        $parsed = shift;
+    }
+
 
     unless (defined $parsed) {
         # 1     - the symbol count check
