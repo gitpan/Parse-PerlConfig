@@ -1,0 +1,24 @@
+0.03    Fri Jul 14 18:15:26 AKDT 2000
+
+    - Removed the $namespace and $filename lexicals that were once
+      accessible from configuration files.  %parse_perl_config is now the
+      only way to access that information.
+
+    - Added File, Handler, Warn_default, Warn_eval, and
+      Error_invalid_namespace arguments.
+
+    - Renamed the Error_preparse argument to Warn_preparse.  This causes a
+      slight backwards-compatibility issue if someone is currently
+      specifying something other than 'noop' for the Error_preparse
+      argument.
+
+
+0.02    Mon Mar 20 22:57:26 AKST 2000
+
+    - Added a Taint_Clean option, for untainting the opened filehandle
+      before evaling the file's contents.
+
+
+0.01    Wed Feb 16 04:19:33 AKST 2000
+
+    - Initial version.
